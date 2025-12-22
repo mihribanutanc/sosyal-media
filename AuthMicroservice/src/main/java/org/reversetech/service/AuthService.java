@@ -1,5 +1,6 @@
 package org.reversetech.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.reversetech.dto.request.CreateUserRequestDto;
 import org.reversetech.dto.request.LoginResponseDto;
 import org.reversetech.dto.request.RegisterRequestDto;
@@ -11,11 +12,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
     private final AuthRepository repository;
     private final UserProfileManager userProfileManager;
 
     public Auth register(RegisterRequestDto dto) {
+
+        log.info("Register request dto {}", dto);
         Auth auth = repository.save(Auth.builder()
                         .userName(dto.getUserName())
                         .email(dto.getEmail())
