@@ -134,6 +134,7 @@ services:
       - "9099:9099"
     networks:
       - local_net
+
 volumes:
   mongo_data:
   postgres_data:
