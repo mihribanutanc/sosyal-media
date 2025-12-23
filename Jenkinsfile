@@ -14,7 +14,10 @@ pipeline {
         stage('Docker Compose Up') {
             steps {
                 echo 'Docker servisleri ayağa kaldırılıyor'
-                sh 'docker compose up -d'
+                sh '''
+                      docker compose down || true
+                      docker compose up -d
+                '''
             }
         }
     }
