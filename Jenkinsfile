@@ -11,17 +11,17 @@ pipeline {
         }
 
         stage('Check Tag') {
-            when { buildingTag() }
+
             steps { echo "Release tag detected: ${env.TAG_NAME}" }
         }
 
         stage('Build') {
-            when { buildingTag() }
+
             steps { sh './gradlew clean build -x test' }
         }
 
         stage('Docker Build') {
-            when { buildingTag() }
+
             steps {
                 sh """
                 docker build -t $REGISTRY/user-service:${TAG_NAME} user-service
@@ -32,7 +32,7 @@ pipeline {
         }
 
         stage('Docker Push') {
-            when { buildingTag() }
+
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'docker-hub',
@@ -50,7 +50,7 @@ pipeline {
         }
 
         stage('Deploy to TEST') {
-            when { buildingTag() }
+
             steps {
                 sshagent(['test-server-key']) {
                     sh """
