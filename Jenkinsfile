@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         REGISTRY = "docker.io/mihribantanc"
+        TAG_NAME = "${env.TAG_NAME ?: 'test-latest'}" // tag yoksa test-latest kullan
     }
 
     stages {
@@ -11,10 +12,10 @@ pipeline {
         }
 
         stage('Check Tag') {
-
-            steps { echo "Release tag detected: ${env.TAG_NAME}" }
+            steps {
+                echo "Release tag detected: ${env.TAG_NAME ?: 'No tag, using test-latest'}"
+            }
         }
-
         stage('Build') {
 
             steps { sh './gradlew clean build -x test' }
