@@ -3,39 +3,45 @@ pipeline {
 
     environment {
         REGISTRY = "docker.io/mihribantanc"
-        TAG_NAME = "${env.TAG_NAME ?: 'test-latest'}" // tag yoksa test-latest kullan
+        TAG_NAME = "${env.TAG_NAME ?: 'test-latest'}" // Tag yoksa test-latest kullan
     }
 
     stages {
         stage('Checkout') {
-            steps { checkout scm }
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('List Workspace') {
+            steps {
+                sh 'ls -l'  // Workspace kontrolü
+            }
         }
 
         stage('Check Tag') {
             steps {
-                echo "Release tag detected: ${env.TAG_NAME ?: 'No tag, using test-latest'}"
+                echo "Release tag detected: ${TAG_NAME}"
             }
         }
+
         stage('Build') {
             steps {
-                sh 'chmod +x ./gradlew'
                 sh './gradlew clean build -x test'
             }
         }
 
         stage('Docker Build') {
-
             steps {
                 sh """
-                docker build -t $REGISTRY/user-service:${TAG_NAME} user-service
-                docker build -t $REGISTRY/auth-service:${TAG_NAME} auth-service
-                docker build -t $REGISTRY/config-server:${TAG_NAME} config-server
+                docker build -t $REGISTRY/user-service:${TAG_NAME} ./user-service
+                docker build -t $REGISTRY/auth-service:${TAG_NAME} ./auth-service
+                docker build -t $REGISTRY/config-server:${TAG_NAME} ./config-server
                 """
             }
         }
 
         stage('Docker Push') {
-
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'docker-hub',
@@ -53,7 +59,6 @@ pipeline {
         }
 
         stage('Deploy to TEST') {
-
             steps {
                 sshagent(['test-server-key']) {
                     sh """
@@ -65,6 +70,5 @@ pipeline {
                 }
             }
         }
-
     }
 }
