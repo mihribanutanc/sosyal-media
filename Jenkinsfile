@@ -3,10 +3,11 @@ pipeline {
 
     environment {
         REGISTRY = "docker.io/mihribantanc"
-        TAG_NAME = "${env.TAG_NAME ?: 'test-latest'}" // Tag yoksa test-latest kullan
+        TAG_NAME = "${env.TAG_NAME ?: 'test-latest'}"
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -15,7 +16,7 @@ pipeline {
 
         stage('List Workspace') {
             steps {
-                sh 'ls -l'  // Workspace kontrolü
+                sh 'ls -l'
             }
         }
 
@@ -25,14 +26,12 @@ pipeline {
             }
         }
 
-   stage('Build') {
-       steps {
-           // Gradlew'a çalıştırma izni ver
-           sh 'chmod +x gradlew'
-           // Build işlemini başlat
-           sh './gradlew clean build -x test'
-       }
-   }
+        stage('Build') {
+            steps {
+                sh 'chmod +x gradlew'
+                sh './gradlew clean build -x test'
+            }
+        }
 
         stage('Docker Build') {
             steps {
@@ -44,34 +43,5 @@ pipeline {
             }
         }
 
-        stage('Docker Push') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'docker-hub',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh """
-                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                    docker push $REGISTRY/user-service:${TAG_NAME}
-                    docker push $REGISTRY/auth-service:${TAG_NAME}
-                    docker push $REGISTRY/config-server:${TAG_NAME}
-                    """
-                }
-            }
-        }
-
         stage('Deploy to TEST') {
             steps {
-                sshagent(['test-server-key']) {
-                    sh """
-                    ssh user@TEST_VM_IP "
-                      docker compose -f docker-compose.test.yml pull &&
-                      docker compose -f docker-compose.test.yml up -d
-                    "
-                    """
-                }
-            }
-        }
-    }
-}
