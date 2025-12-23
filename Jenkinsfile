@@ -25,11 +25,14 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            steps {
-                sh './gradlew clean build -x test'
-            }
-        }
+   stage('Build') {
+       steps {
+           // Gradlew'a çalıştırma izni ver
+           sh 'chmod +x gradlew'
+           // Build işlemini başlat
+           sh './gradlew clean build -x test'
+       }
+   }
 
         stage('Docker Build') {
             steps {
