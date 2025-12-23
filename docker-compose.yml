@@ -92,20 +92,48 @@ services:
     depends_on:
       - redis
 
-  jenkins:
-    build:
-      context: .
-      dockerfile: Dockerfile.jenkins
-    user: root
+  config-server:
+    image: mihriban/config-server:v1.0.0
+    container_name: config-server-test
+    depends_on:
+      - postgres
+      - mongo
+    environment:
+      SPRING_PROFILES_ACTIVE: test
     ports:
-      - "8081:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
+      - "8888:8888"
+    networks:
+      - local_net
 
+  user-service:
+    image: mihriban/user-service:v1.0.0
+    container_name: user-service-test
+    depends_on:
+      - postgres
+      - redis
+      - config-server
+    environment:
+      SPRING_PROFILES_ACTIVE: test
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/testdb
+      SPRING_REDIS_HOST: redis
+    ports:
+      - "9091:9091"
+    networks:
+      - local_net
 
+  auth-service:
+    image: mihriban/auth-service:v1.0.0
+    container_name: auth-service-test
+    depends_on:
+      - mongo
+      - config-server
+    environment:
+      SPRING_PROFILES_ACTIVE: test
+      SPRING_MONGO_URI: mongodb://root:rootpass@mongo:27017/admin
+    ports:
+      - "9099:9099"
+    networks:
+      - local_net
 volumes:
   mongo_data:
   postgres_data:
@@ -116,7 +144,6 @@ volumes:
     external: true
   redis_data:
     external: true
-  jenkins_home:
 
 
 networks:
