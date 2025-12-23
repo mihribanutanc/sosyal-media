@@ -37,9 +37,9 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh """
-                docker build -t $REGISTRY/user-service:${TAG_NAME} ./user-service
-                docker build -t $REGISTRY/auth-service:${TAG_NAME} ./auth-service
-                docker build -t $REGISTRY/config-server:${TAG_NAME} ./config-server
+                docker build -t $REGISTRY/user-service:${TAG_NAME} ./UserMicroservice
+                docker build -t $REGISTRY/auth-service:${TAG_NAME} ./AuthMicroservice
+                docker build -t $REGISTRY/config-server:${TAG_NAME} ./ConfigServer
                 """
             }
         }
