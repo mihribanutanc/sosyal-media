@@ -45,3 +45,16 @@ pipeline {
 
         stage('Deploy to TEST') {
             steps {
+                sshagent(['test-server-key']) {
+                    sh """
+                    ssh user@TEST_VM_IP '
+                      docker compose -f docker-compose.test.yml pull &&
+                      docker compose -f docker-compose.test.yml up -d
+                    '
+                    """
+                }
+            }
+        }
+
+    }
+}
