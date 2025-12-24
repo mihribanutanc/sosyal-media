@@ -45,13 +45,20 @@ pipeline {
 
         stage('Deploy to TEST') {
             steps {
-                sshagent(['test-server-key']) {
-                    sh """
-                    ssh user@TEST_VM_IP '
-                      docker compose -f docker-compose.test.yml pull &&
-                      docker compose -f docker-compose.test.yml up -d
-                    '
-                    """
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                    )]) {
+                         sh '''
+                          set -e
+                          echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+                          docker push ${USER_SERVICE_IMAGE}
+                          docker push ${AUTH_SERVICE_IMAGE}
+                          docker push ${CONFIG_SERVER_IMAGE}
+                        '''
+                    }
                 }
             }
         }
