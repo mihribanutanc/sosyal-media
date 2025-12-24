@@ -58,7 +58,7 @@ pipeline {
                           docker push ${AUTH_SERVICE_IMAGE}
                           docker push ${CONFIG_SERVER_IMAGE}
                         '''
-                    }
+
                 }
             }
         }
