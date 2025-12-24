@@ -54,9 +54,9 @@ pipeline {
                           set -e
                           echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
-                          docker push ${USER_SERVICE_IMAGE}
-                          docker push ${AUTH_SERVICE_IMAGE}
-                          docker push ${CONFIG_SERVER_IMAGE}
+                          docker push $REGISTRY/user-service:${TAG_NAME}
+                          docker push $REGISTRY/auth-service:${TAG_NAME}
+                          docker push $REGISTRY/config-server:${TAG_NAME}
                         '''
 
                 }
