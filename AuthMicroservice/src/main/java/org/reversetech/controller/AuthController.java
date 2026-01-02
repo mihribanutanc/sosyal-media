@@ -21,14 +21,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(REGISTER)
-    public ResponseEntity<Auth> register(@RequestBody RegisterRequestDto dto){
-        if(!dto.getPassword().equals(dto.getRepassword()))
+    public ResponseEntity<Auth> register(@RequestBody RegisterRequestDto dto) {
+        if (!dto.getPassword().equals(dto.getRepassword()))
             throw new RuntimeException("Şifreler uyuşmuyor.");
         return ResponseEntity.ok(authService.register(dto));
     }
 
     @PostMapping(LOGIN)
-    public ResponseEntity<Boolean> login(@RequestBody LoginResponseDto dto){
+    public ResponseEntity<Boolean> login(@RequestBody LoginResponseDto dto) {
         return ResponseEntity.ok(authService.login(dto));
     }
 }

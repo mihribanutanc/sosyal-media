@@ -4,4 +4,6 @@ dependencies {
     annotationProcessor libs.lombok
     implementation libs.springCloudConfigClient
     implementation libs.springBootDataRedis
+    implementation libs.springBootStarterWeb
+    implementation libs.eurekaClient
 }

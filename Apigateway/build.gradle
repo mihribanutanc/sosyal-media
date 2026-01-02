@@ -1,0 +1,5 @@
+dependencies {
+    implementation  libs.springApiGateway
+    implementation  libs.springCloudConfigClient
+    implementation  libs.eurekaClient
+}

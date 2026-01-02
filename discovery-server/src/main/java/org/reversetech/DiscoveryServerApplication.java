@@ -2,12 +2,13 @@ package org.reversetech;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 @SpringBootApplication
-@EnableFeignClients
-public class AuthApplication {
+@EnableEurekaServer
+public class DiscoveryServerApplication {
+
     public static void main(String[] args) {
-        SpringApplication.run(AuthApplication.class, args);
+        SpringApplication.run(DiscoveryServerApplication.class, args);
     }
 }
